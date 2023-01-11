@@ -33,31 +33,31 @@ public class UserController {
 
     @PostMapping()
     public UserDto create(@Validated(AdvancedConstraint.class) @RequestBody UserDto userDto) {
-        log.info("Create user with email{}", userDto.getEmail());
+        log.info("Creating user with email{}", userDto.getEmail());
         return userService.create(userDto);
     }
 
     @GetMapping
     public List<UserDto> getAllUsers() {
-        log.info("Get all Users");
+        log.info("Getting all Users");
         return userService.getAllUsers();
     }
 
     @GetMapping("/{userId}")
     public UserDto get(@PathVariable("userId") int id) {
-        log.info("Get user by id={}", id);
+        log.info("Getting user by id={}", id);
         return userService.get(id);
     }
 
     @PatchMapping("/{userId}")
     public UserDto update(@PathVariable("userId") int id, @Valid @RequestBody UserDto userDto) {
-        log.info("Update user id={}", id);
+        log.info("Updating user id={}", id);
         return userService.update(id, userDto);
     }
 
     @DeleteMapping("/{userId}")
     public void delete(@PathVariable("userId") int id) {
-        log.info("Delete user id={}", id);
+        log.info("Deleting user id={}", id);
         userService.delete(id);
     }
 }

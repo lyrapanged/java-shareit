@@ -16,5 +16,5 @@ public interface UserDao {
 
     Optional<User> get(int id);
 
-    Optional<UserDto> delete(int id);
+    User delete(int id);
 }

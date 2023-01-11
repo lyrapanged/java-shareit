@@ -38,7 +38,7 @@ public class ItemController {
     @PostMapping
     public ItemDto create(@RequestBody @Validated(AdvancedConstraint.class) ItemDto itemDto,
                           @RequestHeader("X-Sharer-User-Id") int idOwner) {
-        log.info("Create item with ownerId={}", idOwner);
+        log.info("Creating item with ownerId={}", idOwner);
         return itemService.create(itemDto, idOwner);
     }
 
@@ -46,25 +46,25 @@ public class ItemController {
     public ItemDto update(@PathVariable("itemId") int itemId,
                           @Validated(BasicConstraint.class) @RequestBody ItemDto itemDto,
                           @RequestHeader("X-Sharer-User-Id") int idOwner) {
-        log.info("Update item id={}", itemId);
+        log.info("Updating item id={}", itemId);
         return itemService.update(itemId, itemDto, idOwner);
     }
 
     @GetMapping("/{itemId}")
     public ItemDto get(@PathVariable("itemId") int id) {
-        log.info("Get item id={}", id);
+        log.info("Getting item id={}", id);
         return itemService.get(id);
     }
 
     @GetMapping
     public List<ItemDto> getOwnItems(@RequestHeader("X-Sharer-User-Id") int idOwner) {
-        log.info("Get items with ownerId={}", idOwner);
+        log.info("Getting items with ownerId={}", idOwner);
         return itemService.getOwnItems(idOwner);
     }
 
     @GetMapping("/search")
     public List<ItemDto> search(@RequestParam String text) {
-        log.info("Search matches by name or description in item with text '{}'", text);
+        log.info("Searching matches by name or description in item with text '{}'", text);
         return itemService.search(text);
     }
 }

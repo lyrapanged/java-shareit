@@ -38,7 +38,9 @@ public class UserService {
     }
 
     public void delete(int id) {
-        userDao.delete(id).orElseThrow(() -> new NotFoundException("User with id = " + id));
+        if (userDao.delete(id) == null) {
+            throw new NotFoundException("User with id = " + id);
+        }
     }
 
     private void checkUniqueEmail(String email) {
