@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class ItemDto {
 
-    int id;
+    Long id;
     @NotBlank(groups = AdvancedConstraint.class)
     @NullOrNotBlank(groups = BasicConstraint.class)
     String name;

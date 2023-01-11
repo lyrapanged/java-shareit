@@ -8,13 +8,13 @@ import java.util.Optional;
 
 public interface ItemDao {
 
-    ItemDto create(Item item, int idOwner);
+    Item create(Item item, long idOwner);
 
-    ItemDto update(int itemId, ItemDto itemDto, int idOwner);
+    Item update(long itemId, ItemDto itemDto, long idOwner);
 
-    Optional<Item> get(int id);
+    Optional<Item> get(long id);
 
-    List<Item> getOwnItems(int idOwner);
+    List<Item> getByOwner(long idOwner);
 
-    List<ItemDto> search(String text);
+    List<Item> search(String text);
 }

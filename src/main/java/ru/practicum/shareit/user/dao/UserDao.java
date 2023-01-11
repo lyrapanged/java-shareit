@@ -8,13 +8,13 @@ import java.util.Optional;
 
 public interface UserDao {
 
-    UserDto create(UserDto userDto);
+    User create(UserDto userDto);
 
-    UserDto update(int id, UserDto userDto);
+    User update(long id, UserDto userDto);
 
-    List<UserDto> getAllUsers();
+    List<User> getAll();
 
-    Optional<User> get(int id);
+    Optional<User> get(long id);
 
-    Optional<User> delete(int id);
+    Optional<User> delete(long id);
 }

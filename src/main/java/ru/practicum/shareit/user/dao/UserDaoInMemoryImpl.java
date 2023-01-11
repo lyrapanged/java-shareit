@@ -3,41 +3,36 @@ package ru.practicum.shareit.user.dao;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.exception.EmailAlreadyExistException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import static java.util.stream.Collectors.toList;
 
 @Repository
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class UserDaoInMemoryImpl implements UserDao {
 
-    private final Map<Integer, User> users = new HashMap<>();
-    private Integer id = 0;
+    private final Map<Long, User> users = new HashMap<>();
+    private Long id = 0L;
 
 
     @Override
-    public UserDto create(UserDto userDto) {
-        if (users.get(userDto.getId()) != null) {
-            throw new EmailAlreadyExistException(userDto.getEmail());
-        }
+    public User create(UserDto userDto) {
         User user = UserMapper.fromUserDto(userDto);
         user.setId(++id);
         users.put(user.getId(), user);
-        return UserMapper.toUserDto(user);
+        return user;
     }
 
     @Override
-    public UserDto update(int id, UserDto userDto) {
+    public User update(long id, UserDto userDto) {
         if (users.get(id) == null) {
             throw new NotFoundException("User with email" + userDto.getEmail());
         }
@@ -48,24 +43,21 @@ public class UserDaoInMemoryImpl implements UserDao {
         if (userDto.getEmail() != null) {
             user.setEmail(userDto.getEmail());
         }
-        users.put(user.getId(), user);
-        return UserMapper.toUserDto(user);
+        return user;
     }
 
     @Override
-    public List<UserDto> getAllUsers() {
-        return users.values().stream()
-                .map(UserMapper::toUserDto)
-                .collect(toList());
+    public List<User> getAll() {
+        return new ArrayList<>(users.values());
     }
 
     @Override
-    public Optional<User> get(int id) {
+    public Optional<User> get(long id) {
         return Optional.ofNullable(users.get(id));
     }
 
     @Override
-    public Optional<User> delete(int id) {
+    public Optional<User> delete(long id) {
         return Optional.ofNullable(users.remove(id));
     }
 }

@@ -1,7 +1,7 @@
 package ru.practicum.shareit.user.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,22 +14,17 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 import static ru.practicum.shareit.user.dto.UserDto.AdvancedConstraint;
+import static ru.practicum.shareit.user.dto.UserDto.BasicConstraint;
 
 @RestController
 @RequestMapping(path = "/users")
-@Validated
 @Slf4j
+@RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @PostMapping()
     public UserDto create(@Validated(AdvancedConstraint.class) @RequestBody UserDto userDto) {
@@ -38,25 +33,25 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserDto> getAllUsers() {
+    public List<UserDto> getAll() {
         log.info("Getting all Users");
-        return userService.getAllUsers();
+        return userService.getAll();
     }
 
     @GetMapping("/{userId}")
-    public UserDto get(@PathVariable("userId") int id) {
+    public UserDto get(@PathVariable("userId") long id) {
         log.info("Getting user by id={}", id);
         return userService.get(id);
     }
 
     @PatchMapping("/{userId}")
-    public UserDto update(@PathVariable("userId") int id, @Valid @RequestBody UserDto userDto) {
+    public UserDto update(@PathVariable("userId") long id, @Validated(BasicConstraint.class) @RequestBody UserDto userDto) {
         log.info("Updating user id={}", id);
         return userService.update(id, userDto);
     }
 
     @DeleteMapping("/{userId}")
-    public void delete(@PathVariable("userId") int id) {
+    public void delete(@PathVariable("userId") long id) {
         log.info("Deleting user id={}", id);
         userService.delete(id);
     }

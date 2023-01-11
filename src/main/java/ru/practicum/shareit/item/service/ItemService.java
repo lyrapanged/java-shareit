@@ -1,6 +1,6 @@
 package ru.practicum.shareit.item.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.WrongAccessException;
@@ -16,49 +16,44 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 @Service
+@RequiredArgsConstructor
 public class ItemService {
 
     private final ItemDao itemDao;
     private final UserDao userDao;
 
-    @Autowired
-    public ItemService(ItemDao itemDao, UserDao userDao) {
-        this.itemDao = itemDao;
-        this.userDao = userDao;
-    }
-
-    public ItemDto create(ItemDto itemDto, int idOwner) {
+    public ItemDto create(ItemDto itemDto, long idOwner) {
         User user = userDao.get(idOwner).orElseThrow(() -> new NotFoundException("User with id = " + idOwner));
         Item item = ItemMapper.fromItemDto(itemDto);
-        item.setId(idOwner);
         item.setOwner(user);
-        return itemDao.create(item, idOwner);
+        return ItemMapper.toItemDto(itemDao.create(item, idOwner));
 
     }
 
-    public ItemDto update(int itemId, ItemDto itemDto, int idOwner) {
-        if (getNotOptional(itemId).getOwner().getId() != idOwner) {
+    public ItemDto update(long itemId, ItemDto itemDto, long idOwner) {
+        if (getOrThrow(itemId).getOwner().getId() != idOwner) {
             throw new WrongAccessException("To update, you need to be owner of the item");
+
         }
-        return itemDao.update(itemId, itemDto, idOwner);
+        return ItemMapper.toItemDto(itemDao.update(itemId, itemDto, idOwner));
     }
 
-    public ItemDto get(int id) {
-        return ItemMapper.toItemDto(getNotOptional(id));
+    public ItemDto get(long id) {
+        return ItemMapper.toItemDto(getOrThrow(id));
     }
 
-    public List<ItemDto> getOwnItems(int idOwner) {
-        return itemDao.getOwnItems(idOwner).stream().map(ItemMapper::toItemDto).collect(toList());
+    public List<ItemDto> getByOwner(long idOwner) {
+        return itemDao.getByOwner(idOwner).stream().map(ItemMapper::toItemDto).collect(toList());
     }
 
     public List<ItemDto> search(String text) {
         if (text.isBlank()) {
             return List.of();
         }
-        return itemDao.search(text);
+        return itemDao.search(text).stream().map(ItemMapper::toItemDto).collect(toList());
     }
 
-    private Item getNotOptional(int id) {
+    private Item getOrThrow(long id) {
         return itemDao.get(id).orElseThrow(() -> new NotFoundException("item with id"));
     }
 }

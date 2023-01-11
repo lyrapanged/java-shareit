@@ -36,7 +36,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Map<String, String> handleUnexpectedException(Throwable exception) {
-        Map<String, String> result = Map.of("Internal Server Error", exception.getMessage());
+        Map<String, String> result = Map.of("Internal Server Error: {}", exception.getMessage());
         log.warn(String.valueOf(result), exception);
         return result;
     }

@@ -3,7 +3,6 @@ package ru.practicum.shareit.item.dao;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.ArrayList;
@@ -17,27 +16,21 @@ import static java.util.stream.Collectors.toList;
 @Repository
 public class ItemDaoInMemoryImpl implements ItemDao {
 
-    private final Map<Integer, List<Item>> items = new HashMap<>();
-    private int id = 0;
+    private final Map<Long, Map<Long, Item>> items = new HashMap<>();
+    private long id = 0;
 
     @Override
-    public ItemDto create(Item item, int idOwner) {
-        if (items.get(idOwner) != null) {
-            item.setId(++id);
-            items.get(idOwner).add(item);
-        } else {
-            List<Item> things = new ArrayList<>();
-            item.setId(++id);
-            things.add(item);
-            items.put(idOwner, things);
-        }
-        return ItemMapper.toItemDto(item);
+    public Item create(Item item, long idOwner) {
+        Map<Long, Item> itemsTemporary = items.computeIfAbsent(idOwner, k -> new HashMap<>());
+        item.setId(++id);
+        itemsTemporary.put(item.getId(), item);
+        items.put(idOwner, itemsTemporary);
+        return item;
     }
 
     @Override
-    public ItemDto update(int itemId, ItemDto itemDto, int idOwner) {
-        Item item = items.get(idOwner).stream()
-                .findAny().orElseThrow(() -> new NotFoundException("item with id =" + itemId));
+    public Item update(long itemId, ItemDto itemDto, long idOwner) {
+        Item item = this.get(itemId).orElseThrow(() -> new NotFoundException("item with id =" + itemId));
         if (itemDto.getAvailable() != null) {
             item.setAvailable(itemDto.getAvailable());
         }
@@ -47,29 +40,25 @@ public class ItemDaoInMemoryImpl implements ItemDao {
         if (itemDto.getDescription() != null) {
             item.setDescription((itemDto.getDescription()));
         }
-        return ItemMapper.toItemDto(item);
+        return item;
     }
 
     @Override
-    public Optional<Item> get(int id) {
-        return items.values().stream()
-                .flatMap(itemList -> itemList.stream()
-                        .filter(item -> item.getId() == id))
-                .findAny();
+    public Optional<Item> get(long id) {
+        return items.values().stream().filter(x -> x.get(id) != null).findAny().map(x -> x.get(id));
     }
 
     @Override
-    public List<Item> getOwnItems(int idOwner) {
-        return items.get(idOwner);
+    public List<Item> getByOwner(long idOwner) {
+        return new ArrayList<>(items.get(idOwner).values());
     }
 
     @Override
-    public List<ItemDto> search(String text) {
-        return items.values().stream().flatMap(itemList -> itemList.stream()
+    public List<Item> search(String text) {
+        return items.values().stream().flatMap(itemList -> itemList.values().stream()
                         .filter(item -> (item.getName().toLowerCase().contains(text.toLowerCase()) ||
                                 item.getDescription().toLowerCase().contains(text.toLowerCase()))
                                 && item.getAvailable()))
-                .map(ItemMapper::toItemDto)
                 .collect(toList());
     }
 }
