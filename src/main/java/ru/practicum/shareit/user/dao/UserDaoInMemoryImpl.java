@@ -65,7 +65,7 @@ public class UserDaoInMemoryImpl implements UserDao {
     }
 
     @Override
-    public Optional <User> delete(int id) {
+    public Optional<User> delete(int id) {
         return Optional.ofNullable(users.remove(id));
     }
 }
