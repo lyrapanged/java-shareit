@@ -38,7 +38,7 @@ public class UserService {
     }
 
     public void delete(int id) {
-        if (userDao.delete(id) == null) {
+        if (userDao.delete(id).isEmpty()) {
             throw new NotFoundException("User with id = " + id);
         }
     }
