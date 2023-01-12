@@ -50,7 +50,8 @@ public class ItemDaoInMemoryImpl implements ItemDao {
 
     @Override
     public List<Item> getByOwner(long idOwner) {
-        return new ArrayList<>(items.get(idOwner).values());
+        return new ArrayList<>(Optional.ofNullable(items.get(idOwner))
+                .orElseThrow(() -> new NotFoundException("item with idOwner="  + idOwner)).values());
     }
 
     @Override
