@@ -1,8 +1,9 @@
-TRUNCATE TABLE users,items,comments,bookings CASCADE ;
-ALTER SEQUENCE users_id_seq RESTART WITH 1;
-ALTER SEQUENCE items_id_seq RESTART WITH 1;
-ALTER SEQUENCE comments_id_seq RESTART WITH 1;
-ALTER SEQUENCE bookings_id_seq RESTART WITH 1;
+-- TRUNCATE TABLE users,items,comments,bookings CASCADE ;
+-- ALTER SEQUENCE users_id_seq RESTART WITH 1;
+-- ALTER SEQUENCE items_id_seq RESTART WITH 1;
+-- ALTER SEQUENCE comments_id_seq RESTART WITH 1;
+-- ALTER SEQUENCE bookings_id_seq RESTART WITH 1;
+
 CREATE TABLE IF NOT EXISTS users
 (
     id BIGSERIAL PRIMARY KEY,

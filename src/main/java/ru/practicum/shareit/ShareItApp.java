@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ShareItApp {
 
     public static void main(String[] args) {
-        System.setProperty("spring.main.lazy-initialization", "true");
         SpringApplication.run(ShareItApp.class, args);
     }
 
