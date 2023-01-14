@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
-    List<Item> findByOwnerId(Long ownerId);
+    List<Item> findByOwnerIdOrderById(Long ownerId);
 
     @Query("SELECT i FROM Item i " +
             "WHERE (LOWER(i.description) LIKE %?1% OR LOWER(i.name) LIKE %?1%)" +

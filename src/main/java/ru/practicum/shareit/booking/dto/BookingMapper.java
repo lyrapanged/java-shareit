@@ -26,12 +26,24 @@ public class BookingMapper {
                 .build();
     }
 
+
+
     public static Booking toBooking(BookingDtoRequest bookingDtoRequest, User booker, Item item) {
         return Booking.builder()
                 .start(bookingDtoRequest.getStart())
                 .end(bookingDtoRequest.getEnd())
                 .booker(booker)
                 .item(item)
+                .build();
+    }
+
+    public static BookingDtoResponseShort toBookingDtoShort(Booking booking) {
+        if(booking == null){
+            return null;
+        }
+        return BookingDtoResponseShort.builder()
+                .id(booking.getId())
+                .bookerId(booking.getBooker().getId())
                 .build();
     }
 }

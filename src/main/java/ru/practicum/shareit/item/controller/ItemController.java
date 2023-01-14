@@ -50,9 +50,10 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDtoWithBookingDate get(@PathVariable("itemId") long id) {
+    public ItemDtoWithBookingDate get(@PathVariable("itemId") long id,
+                                      @RequestHeader(X_SHARER_USER_ID) long idOwner) {
         log.info("Getting item id={}", id);
-        return itemService.get(id);
+        return itemService.get(id,idOwner);
     }
 
     @GetMapping

@@ -16,8 +16,8 @@ public class CommentMapper {
     public static Comment toComment(CommentDtoRequest commentDto, User user, Item item){
         return Comment.builder()
                 .text(commentDto.getText())
-                .author(user)
                 .item(item)
+                .author(user)
                 .created(LocalDateTime.now())
                 .build();
     }

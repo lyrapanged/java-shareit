@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.dto.BookingDtoRequest;
 import ru.practicum.shareit.booking.dto.BookingDtoResponse;
+import ru.practicum.shareit.booking.dto.BookingDtoResponseShort;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 
@@ -41,8 +42,8 @@ public class ItemMapper {
         }
     }
 
-    public static ItemDtoWithBookingDate toItemDtoWithBookingDate(Item item, BookingDtoResponse last
-            , BookingDtoResponse next, List<CommentDtoResponse> comments){
+    public static ItemDtoWithBookingDate toItemDtoWithBookingDate(Item item, BookingDtoResponseShort last
+            , BookingDtoResponseShort next, List<CommentDtoResponse> comments){
         var build = ItemDtoWithBookingDate.builder()
                 .id(item.getId())
                 .name(item.getName())
