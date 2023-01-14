@@ -7,7 +7,6 @@ import ru.practicum.shareit.util.NullOrNotBlank;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Null;
-import java.util.Optional;
 
 @Value
 @Builder

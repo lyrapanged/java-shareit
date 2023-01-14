@@ -11,7 +11,7 @@ public interface BookingService {
 
     BookingDtoResponse updateStatus(long bookingId, long userId, boolean isApprove);
 
-    BookingDtoResponse get(long bookingId,long userId);
+    BookingDtoResponse get(long bookingId, long userId);
 
     List<BookingDtoResponse> getAllByBooker(long ownerId, BookingState state);
 

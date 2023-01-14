@@ -63,14 +63,14 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDtoWithBookingDate get(long id, long idOwner) {
         boolean isOwner = getItemOrThrow(id).getOwner().getId() == idOwner;
-        return addDateToItem(getItemOrThrow(id), id, isOwner);
+        return addDateToItem(getItemOrThrow(id), isOwner);
     }
 
     @Override
     public List<ItemDtoWithBookingDate> getByOwner(long idOwner) {
         boolean isOwner = true;
         return itemRepository.findByOwnerIdOrderById(idOwner).stream()
-                .map(item -> addDateToItem(item, idOwner, isOwner)).collect(toList());
+                .map(item -> addDateToItem(item, isOwner)).collect(toList());
     }
 
     @Override
@@ -102,8 +102,7 @@ public class ItemServiceImpl implements ItemService {
         return userRepository.findById(id).orElseThrow(() -> new NotFoundException("user with id = " + id));
     }
 
-    private ItemDtoWithBookingDate addDateToItem(Item item, long userId, boolean isOwner) {
-        List<Booking> foo = bookingRepository.findAllByItemId(item.getId());
+    private ItemDtoWithBookingDate addDateToItem(Item item, boolean isOwner) {
         LocalDateTime now = LocalDateTime.now();
         Booking last = null;
         Booking next = null;

@@ -15,7 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
 import java.util.Objects;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -41,7 +40,6 @@ public class Item {
     @ManyToOne(optional = false)
     @JoinColumn(name = "owner_id")
     private User owner;
-    //private ItemRequest request;
 
     @Override
     public boolean equals(Object o) {

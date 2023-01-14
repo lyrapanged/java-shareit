@@ -13,11 +13,11 @@ public interface ItemService {
 
     ItemDto update(long itemId, ItemDto itemDto, long idOwner);
 
-    ItemDtoWithBookingDate get(long itemId,long idOwner);
+    ItemDtoWithBookingDate get(long itemId, long idOwner);
 
     List<ItemDtoWithBookingDate> getByOwner(long idOwner);
 
     List<ItemDto> search(String text);
 
-    CommentDtoResponse createComment(CommentDtoRequest commentDto,long userId,long itemId);
+    CommentDtoResponse createComment(CommentDtoRequest commentDto, long userId, long itemId);
 }

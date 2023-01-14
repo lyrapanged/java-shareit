@@ -18,13 +18,12 @@ import static ru.practicum.shareit.user.dto.UserMapper.fromUserDto;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
     @Transactional
     public UserDto create(UserDto userDto) {
-        //checkUniqueEmail(userDto.getEmail());
         return UserMapper.toUserDto(userRepository.save(fromUserDto(userDto)));
     }
 

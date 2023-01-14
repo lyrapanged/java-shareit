@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.item.dto.CommentDtoRequest;
 import ru.practicum.shareit.item.dto.CommentDtoResponse;
@@ -19,7 +18,6 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoWithBookingDate;
 import ru.practicum.shareit.item.service.ItemService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 import static ru.practicum.shareit.item.dto.ItemDto.AdvancedConstraint;
@@ -53,7 +51,7 @@ public class ItemController {
     public ItemDtoWithBookingDate get(@PathVariable("itemId") long id,
                                       @RequestHeader(X_SHARER_USER_ID) long idOwner) {
         log.info("Getting item id={}", id);
-        return itemService.get(id,idOwner);
+        return itemService.get(id, idOwner);
     }
 
     @GetMapping
@@ -69,9 +67,9 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentDtoResponse createComment(@Validated @RequestBody CommentDtoRequest comment,
+    public CommentDtoResponse createComment(@Validated(CommentDtoRequest.BasicConstraint.class) @RequestBody CommentDtoRequest comment,
                                             @RequestHeader(X_SHARER_USER_ID) long userId,
-                                            @PathVariable long itemId){
-        return itemService.createComment(comment,userId,itemId);
+                                            @PathVariable long itemId) {
+        return itemService.createComment(comment, userId, itemId);
     }
 }

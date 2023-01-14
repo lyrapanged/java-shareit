@@ -9,10 +9,13 @@ import java.time.LocalDateTime;
 @Value
 @Builder
 public class CommentDtoRequest {
-    //Long id;
-    @NotBlank
+
+    @NotBlank(groups = BasicConstraint.class)
     String text;
     Long itemId;
     Long authorId;
     LocalDateTime created;
+
+    public interface BasicConstraint {
+    }
 }

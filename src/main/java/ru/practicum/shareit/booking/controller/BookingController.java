@@ -22,9 +22,6 @@ import java.util.List;
 
 import static ru.practicum.shareit.util.Constants.X_SHARER_USER_ID;
 
-/**
- * TODO Sprint add-bookings.
- */
 @RestController
 @RequestMapping(path = "/bookings")
 @Validated
@@ -48,14 +45,14 @@ public class BookingController {
             @RequestHeader(X_SHARER_USER_ID) long userId,
             @RequestParam(name = "approved") boolean isApprove) {
         log.info("Updating status bookingId={}", bookingId);
-        return bookingService.updateStatus(bookingId,userId,isApprove);
+        return bookingService.updateStatus(bookingId, userId, isApprove);
     }
 
     @GetMapping("{bookingId}")
     public BookingDtoResponse get(@PathVariable long bookingId,
                                   @RequestHeader(X_SHARER_USER_ID) long userId) {
         log.info("Getting booking id={}", bookingId);
-        return bookingService.get(bookingId,userId);
+        return bookingService.get(bookingId, userId);
     }
 
     @GetMapping()
@@ -63,7 +60,7 @@ public class BookingController {
             @RequestHeader(X_SHARER_USER_ID) long ownerId,
             @RequestParam(defaultValue = "ALL") BookingState state) {
         log.info("Getting all booking with idOwner={}", ownerId);
-        return bookingService.getAllByBooker(ownerId,state);
+        return bookingService.getAllByBooker(ownerId, state);
     }
 
     @GetMapping("/owner")
@@ -71,6 +68,6 @@ public class BookingController {
             @RequestHeader(X_SHARER_USER_ID) long ownerId,
             @RequestParam(defaultValue = "ALL") BookingState state) {
         log.info("Getting all booking with idOwner={}", ownerId);
-        return bookingService.getAllByOwner(ownerId,state);
+        return bookingService.getAllByOwner(ownerId, state);
     }
 }
