@@ -7,6 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.Map;
 
@@ -26,6 +27,18 @@ public class ErrorHandler {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<String> nonValidException(final ValidationException e) {
+        log.info("Validation exception: {}", e.getMessage());
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> unsupportedEx(final MethodArgumentTypeMismatchException e) {
+        log.info("Validation exception: {}", e.getMessage());
+        return Map.of("error", "Unknown state: UNSUPPORTED_STATUS");
+    }
 
     @ExceptionHandler
     public ResponseEntity<String> wrongAccessException(final WrongAccessException e) {

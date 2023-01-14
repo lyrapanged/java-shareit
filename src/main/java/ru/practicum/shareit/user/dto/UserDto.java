@@ -7,6 +7,7 @@ import ru.practicum.shareit.util.NullOrNotBlank;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Null;
+import java.util.Optional;
 
 @Value
 @Builder
@@ -21,6 +22,7 @@ public class UserDto {
     @NotBlank(groups = AdvancedConstraint.class)
     @NullOrNotBlank(groups = BasicConstraint.class)
     String email;
+
 
     public interface AdvancedConstraint {
     }
