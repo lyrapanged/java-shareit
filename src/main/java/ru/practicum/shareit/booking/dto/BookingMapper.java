@@ -24,7 +24,6 @@ public class BookingMapper {
                 .build();
     }
 
-
     public static Booking toBooking(BookingDtoRequest bookingDtoRequest, User booker, Item item) {
         return Booking.builder()
                 .start(bookingDtoRequest.getStart())
