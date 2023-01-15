@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.exception.EmailAlreadyExistException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dao.UserRepository;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -30,9 +29,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto update(long id, UserDto userDto) {
-        if (!getUserOrThrow(id).getEmail().equals(userDto.getEmail())) {
-            checkUniqueEmail(userDto.getEmail());
-        }
         User user = getUserOrThrow(id);
         UserMapper.fromUserDtoToUpdate(userDto, user);
         return UserMapper.toUserDto(user);
@@ -55,15 +51,6 @@ public class UserServiceImpl implements UserService {
             userRepository.deleteById(id);
         } catch (EmptyResultDataAccessException | IllegalArgumentException exception) {
             throw new NotFoundException("user with id=" + id);
-        }
-    }
-
-    private void checkUniqueEmail(String email) {
-        boolean isUnique = userRepository.findAll().stream()
-                .map(User::getEmail)
-                .noneMatch(userEmail -> userEmail.equals(email));
-        if (!isUnique) {
-            throw new EmailAlreadyExistException(email);
         }
     }
 

@@ -2,7 +2,6 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.Builder;
 import lombok.Value;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.util.NullOrNotBlank;
 
 import javax.validation.constraints.NotBlank;
@@ -23,7 +22,7 @@ public class ItemDto {
     @NotNull(groups = AdvancedConstraint.class)
     Boolean available;
 
-    User owner;
+    Long ownerId;
 
     public interface AdvancedConstraint {
     }

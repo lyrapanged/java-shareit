@@ -36,9 +36,9 @@ public class BookingMapper {
     }
 
     public static BookingDtoResponseShort toBookingDtoShort(Booking booking) {
-        return booking != null ? BookingDtoResponseShort.builder()
+        return BookingDtoResponseShort.builder()
                 .id(booking.getId())
                 .bookerId(booking.getBooker().getId())
-                .build() : null;
+                .build();
     }
 }
