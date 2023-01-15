@@ -79,20 +79,20 @@ public class BookingServiceImpl implements BookingService {
         getUserOrThrow(ownerId);
         switch (state) {
             case PAST:
-                return convertToBookingDto(bookingRepository.
-                        findAllByBookerIdAndEndIsBefore(ownerId, now(), SORT_BY_START_DESC));
+                return convertToBookingDto(bookingRepository
+                        .findAllByBookerIdAndEndIsBefore(ownerId, now(), SORT_BY_START_DESC));
             case CURRENT:
-                return convertToBookingDto(bookingRepository.
-                        findAllByBookerIdAndStartIsBeforeAndEndIsAfter(ownerId, now(), now(), SORT_BY_START_DESC));
+                return convertToBookingDto(bookingRepository
+                        .findAllByBookerIdAndStartIsBeforeAndEndIsAfter(ownerId, now(), now(), SORT_BY_START_DESC));
             case FUTURE:
-                return convertToBookingDto(bookingRepository.
-                        findAllByBookerIdAndStartIsAfter(ownerId, now(), SORT_BY_START_DESC));
+                return convertToBookingDto(bookingRepository
+                        .findAllByBookerIdAndStartIsAfter(ownerId, now(), SORT_BY_START_DESC));
             case WAITING:
-                return convertToBookingDto(bookingRepository.
-                        findAllByBookerIdAndStatus(ownerId, WAITING, SORT_BY_START_DESC));
+                return convertToBookingDto(bookingRepository
+                        .findAllByBookerIdAndStatus(ownerId, WAITING, SORT_BY_START_DESC));
             case REJECTED:
-                return convertToBookingDto(bookingRepository.
-                        findAllByBookerIdAndStatus(ownerId, REJECTED, SORT_BY_START_DESC));
+                return convertToBookingDto(bookingRepository
+                        .findAllByBookerIdAndStatus(ownerId, REJECTED, SORT_BY_START_DESC));
             default:
                 return convertToBookingDto(bookingRepository.findAllByBookerIdOrderByStartDesc(ownerId));
         }
@@ -103,23 +103,23 @@ public class BookingServiceImpl implements BookingService {
         getUserOrThrow(ownerId);
         switch (state) {
             case PAST:
-                return convertToBookingDto(bookingRepository.
-                        findAllItemOwnerPastBookings(ownerId, now(), SORT_BY_START_DESC));
+                return convertToBookingDto(bookingRepository
+                        .findAllItemOwnerPastBookings(ownerId, now(), SORT_BY_START_DESC));
             case CURRENT:
-                return convertToBookingDto(bookingRepository.
-                        findAllItemOwnerCurrentBookings(ownerId, now(), SORT_BY_START_DESC));
+                return convertToBookingDto(bookingRepository
+                        .findAllItemOwnerCurrentBookings(ownerId, now(), SORT_BY_START_DESC));
             case FUTURE:
-                return convertToBookingDto(bookingRepository.
-                        findAllItemOwnerFutureBookings(ownerId, now(), SORT_BY_START_DESC));
+                return convertToBookingDto(bookingRepository
+                        .findAllItemOwnerFutureBookings(ownerId, now(), SORT_BY_START_DESC));
             case WAITING:
-                return convertToBookingDto(bookingRepository.
-                        findAllItemOwnerBookingsByStatus(ownerId, WAITING, SORT_BY_START_DESC));
+                return convertToBookingDto(bookingRepository
+                        .findAllItemOwnerBookingsByStatus(ownerId, WAITING, SORT_BY_START_DESC));
             case REJECTED:
-                return convertToBookingDto(bookingRepository.
-                        findAllItemOwnerBookingsByStatus(ownerId, REJECTED, SORT_BY_START_DESC));
+                return convertToBookingDto(bookingRepository
+                        .findAllItemOwnerBookingsByStatus(ownerId, REJECTED, SORT_BY_START_DESC));
             default:
-                return convertToBookingDto(bookingRepository.
-                        findAllItemOwnerBookings(ownerId, SORT_BY_START_DESC));
+                return convertToBookingDto(bookingRepository
+                        .findAllItemOwnerBookings(ownerId, SORT_BY_START_DESC));
         }
     }
 

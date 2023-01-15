@@ -84,8 +84,8 @@ public class ItemServiceImpl implements ItemService {
         LocalDateTime now = now();
         Map<Item, List<Comment>> itemsWithComments = comments.stream()
                 .collect(Collectors.groupingBy(Comment::getItem, Collectors.toList()));
-        List<Booking> last = bookingRepository.
-                findAllByItemInAndStartLessThanEqualAndStatusIs(items, now, APPROVED, SORT_BY_ID_DESC);
+        List<Booking> last = bookingRepository
+                .findAllByItemInAndStartLessThanEqualAndStatusIs(items, now, APPROVED, SORT_BY_ID_DESC);
         List<Booking> next = bookingRepository
                 .findAllByItemInAndStartAfterAndStatusIs(items, now, APPROVED, SORT_BY_ID_ASC);
         Map<Item, Booking> lastByItem = last.stream().collect(toMap(Booking::getItem, booking -> booking));
@@ -140,8 +140,8 @@ public class ItemServiceImpl implements ItemService {
                     item, now, APPROVED, SORT_BY_START_ASC).orElse(null);
         }
         List<Comment> comments = commentRepository.findAllByItemId(item.getId());
-        List<CommentDtoResponse> commentsDto = comments.stream().
-                map(CommentMapper::fromComment).collect(Collectors.toList());
+        List<CommentDtoResponse> commentsDto = comments.stream()
+                .map(CommentMapper::fromComment).collect(Collectors.toList());
         return ItemMapper.toItemDtoWithBookingDate(
                 item, BookingMapper.toBookingDtoShort(last), BookingMapper.toBookingDtoShort(next), commentsDto);
     }
