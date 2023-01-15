@@ -2,23 +2,22 @@ package ru.practicum.shareit.booking.dto;
 
 import lombok.Builder;
 import lombok.Value;
+import ru.practicum.shareit.util.StartBeforeEnd;
 
+import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Value
 @Builder
+@StartBeforeEnd
 public class BookingDtoRequest {
 
-    @NotNull
-    long id;
-    @NotNull
     @FutureOrPresent
     LocalDateTime start;
-    @NotNull
-    @FutureOrPresent
+    @Future
     LocalDateTime end;
     @NotNull
-    long itemId;
+    Long itemId;
 }

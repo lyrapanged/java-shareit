@@ -18,6 +18,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoWithBookingDate;
 import ru.practicum.shareit.item.service.ItemService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 import static ru.practicum.shareit.item.dto.ItemDto.AdvancedConstraint;
@@ -67,7 +68,7 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentDtoResponse createComment(@Validated(CommentDtoRequest.BasicConstraint.class) @RequestBody CommentDtoRequest comment,
+    public CommentDtoResponse createComment(@Valid @RequestBody CommentDtoRequest comment,
                                             @RequestHeader(X_SHARER_USER_ID) long userId,
                                             @PathVariable long itemId) {
         return itemService.createComment(comment, userId, itemId);

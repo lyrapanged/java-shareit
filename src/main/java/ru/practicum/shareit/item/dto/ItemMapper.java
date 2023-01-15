@@ -16,6 +16,7 @@ public class ItemMapper {
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
+                .owner(item.getOwner())
                 .build();
     }
 
@@ -40,7 +41,7 @@ public class ItemMapper {
     }
 
     public static ItemDtoWithBookingDate toItemDtoWithBookingDate(Item item, BookingDtoResponseShort last,
-            BookingDtoResponseShort next, List<CommentDtoResponse> comments) {
+                                                                  BookingDtoResponseShort next, List<CommentDtoResponse> comments) {
         var build = ItemDtoWithBookingDate.builder()
                 .id(item.getId())
                 .name(item.getName())

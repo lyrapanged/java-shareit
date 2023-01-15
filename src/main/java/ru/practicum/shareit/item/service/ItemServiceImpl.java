@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dao.BookingRepository;
@@ -23,11 +24,22 @@ import ru.practicum.shareit.user.dao.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.time.LocalDateTime.now;
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static org.springframework.data.domain.Sort.Direction.DESC;
+import static ru.practicum.shareit.booking.model.BookingStatus.APPROVED;
+import static ru.practicum.shareit.util.Constants.SORT_BY_ID_ASC;
+import static ru.practicum.shareit.util.Constants.SORT_BY_ID_DESC;
+import static ru.practicum.shareit.util.Constants.SORT_BY_START_ASC;
+import static ru.practicum.shareit.util.Constants.SORT_BY_START_DESC;
 
 @Service
 @RequiredArgsConstructor
@@ -54,10 +66,9 @@ public class ItemServiceImpl implements ItemService {
         Item item = getItemOrThrow(itemId);
         if (item.getOwner().getId() != idOwner) {
             throw new WrongAccessException("To update, you need to be owner of the item");
-
         }
         ItemMapper.updateFromItemDto(itemDto, item);
-        return ItemMapper.toItemDto(itemRepository.save(item));
+        return ItemMapper.toItemDto(item);
     }
 
     @Override
@@ -68,9 +79,25 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDtoWithBookingDate> getByOwner(long idOwner) {
-        boolean isOwner = true;
-        return itemRepository.findByOwnerIdOrderById(idOwner).stream()
-                .map(item -> addDateToItem(item, isOwner)).collect(toList());
+        List<Item> items = itemRepository.findByOwnerId(idOwner, Sort.by(DESC, "id"));
+        List<Comment> comments = commentRepository.findAllByItemIn(items);
+        LocalDateTime now = now();
+        Map<Item, List<Comment>> itemsWithComments = comments.stream()
+                .collect(Collectors.groupingBy(Comment::getItem, Collectors.toList()));
+        List<Booking> last = bookingRepository.
+                findAllByItemInAndStartLessThanEqualAndStatusIs(items, now, APPROVED, SORT_BY_ID_DESC);
+        List<Booking> next = bookingRepository
+                .findAllByItemInAndStartAfterAndStatusIs(items, now, APPROVED, SORT_BY_ID_ASC);
+        Map<Item, Booking> lastByItem = last.stream().collect(toMap(Booking::getItem, booking -> booking));
+        Map<Item, Booking> nextByItem = next.stream().collect(toMap(Booking::getItem, booking -> booking));
+        return items.stream()
+                .map(item -> ItemMapper.toItemDtoWithBookingDate(
+                        item,
+                        BookingMapper.toBookingDtoShort(lastByItem.get(item)),
+                        BookingMapper.toBookingDtoShort(nextByItem.get(item)),
+                        Optional.ofNullable(itemsWithComments.get(item)).orElseGet(Collections::emptyList)
+                                .stream().map(CommentMapper::fromComment).collect(toList())))
+                .sorted(comparing(ItemDtoWithBookingDate::getId)).collect(toList());
     }
 
     @Override
@@ -107,12 +134,15 @@ public class ItemServiceImpl implements ItemService {
         Booking last = null;
         Booking next = null;
         if (isOwner) {
-            last = bookingRepository.findFirstByItemIdAndStartIsBeforeOrderByStartDesc(item.getId(), now).orElse(null);
-            next = bookingRepository.findFirstByItemIdAndStartIsAfterOrderByStart(item.getId(), now).orElse(null);
+            last = bookingRepository.findFirstByItemAndStartLessThanEqualAndStatusIs(
+                    item, now, APPROVED, SORT_BY_START_DESC).orElse(null);
+            next = bookingRepository.findFirstByItemAndStartAfterAndStatusIs(
+                    item, now, APPROVED, SORT_BY_START_ASC).orElse(null);
         }
-        List<CommentDtoResponse> commentList = commentRepository.findAllByItemId(item.getId()).stream()
-                .map(CommentMapper::fromComment).collect(Collectors.toList());
+        List<Comment> comments = commentRepository.findAllByItemId(item.getId());
+        List<CommentDtoResponse> commentsDto = comments.stream().
+                map(CommentMapper::fromComment).collect(Collectors.toList());
         return ItemMapper.toItemDtoWithBookingDate(
-                item, BookingMapper.toBookingDtoShort(last), BookingMapper.toBookingDtoShort(next), commentList);
+                item, BookingMapper.toBookingDtoShort(last), BookingMapper.toBookingDtoShort(next), commentsDto);
     }
 }

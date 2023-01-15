@@ -22,11 +22,12 @@ public class CommentMapper {
     }
 
     public static CommentDtoResponse fromComment(Comment comment) {
-        return CommentDtoResponse.builder()
+        return comment != null ? CommentDtoResponse.builder()
                 .id(comment.getId())
                 .text(comment.getText())
                 .authorName(comment.getAuthor().getName())
                 .created(comment.getCreated())
-                .build();
+                .build()
+                : null;
     }
 }
