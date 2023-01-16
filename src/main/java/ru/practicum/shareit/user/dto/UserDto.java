@@ -22,6 +22,7 @@ public class UserDto {
     @NullOrNotBlank(groups = BasicConstraint.class)
     String email;
 
+
     public interface AdvancedConstraint {
     }
 

@@ -22,6 +22,8 @@ public class ItemDto {
     @NotNull(groups = AdvancedConstraint.class)
     Boolean available;
 
+    Long ownerId;
+
     public interface AdvancedConstraint {
     }
 

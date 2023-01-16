@@ -11,59 +11,46 @@ import ru.practicum.shareit.user.model.User;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
-import static javax.persistence.GenerationType.IDENTITY;
-
 @Entity
-@Table(name = "items")
-@Builder
-@AllArgsConstructor
+@Table(name = "comments")
 @NoArgsConstructor
-@Getter
+@AllArgsConstructor
 @Setter
-public class Item {
-
+@Getter
+@Builder
+public class Comment {
     @Id
-    @GeneratedValue(strategy = IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "item_name")
-    private String name;
-    @Column
-    private String description;
-    @Column(name = "is_available")
-    private Boolean available;
+    @Column(name = "comment_text")
+    private String text;
     @ManyToOne(optional = false)
-    @JoinColumn(name = "owner_id")
-    private User owner;
+    @JoinColumn(name = "item_id")
+    private Item item;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "author_id")
+    private User author;
+    @Column
+    private LocalDateTime created;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Item item = (Item) o;
-        return id != null && Objects.equals(id, item.id);
+        Comment comment = (Comment) o;
+        return id != null && Objects.equals(id, comment.id);
     }
 
     @Override
     public int hashCode() {
         return getClass().hashCode();
     }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + "(" +
-                "id = " + id + ", " +
-                "name = " + name + ", " +
-                "description = " + description + ", " +
-                "available = " + available + ", " +
-                "owner = " + owner + ")";
-    }
 }
-
-
-

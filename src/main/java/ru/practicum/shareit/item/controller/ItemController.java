@@ -12,13 +12,18 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.shareit.item.dto.CommentDtoRequest;
+import ru.practicum.shareit.item.dto.CommentDtoResponse;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDtoWithBookingDate;
 import ru.practicum.shareit.item.service.ItemService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 import static ru.practicum.shareit.item.dto.ItemDto.AdvancedConstraint;
 import static ru.practicum.shareit.item.dto.ItemDto.BasicConstraint;
+import static ru.practicum.shareit.util.Constants.X_SHARER_USER_ID;
 
 @RestController
 @RequestMapping("/items")
@@ -30,7 +35,7 @@ public class ItemController {
 
     @PostMapping
     public ItemDto create(@RequestBody @Validated(AdvancedConstraint.class) ItemDto itemDto,
-                          @RequestHeader("X-Sharer-User-Id") long idOwner) {
+                          @RequestHeader(X_SHARER_USER_ID) long idOwner) {
         log.info("Creating item with ownerId={}", idOwner);
         return itemService.create(itemDto, idOwner);
     }
@@ -38,19 +43,20 @@ public class ItemController {
     @PatchMapping("/{itemId}")
     public ItemDto update(@PathVariable("itemId") long itemId,
                           @Validated(BasicConstraint.class) @RequestBody ItemDto itemDto,
-                          @RequestHeader("X-Sharer-User-Id") long idOwner) {
+                          @RequestHeader(X_SHARER_USER_ID) long idOwner) {
         log.info("Updating item id={}", itemId);
         return itemService.update(itemId, itemDto, idOwner);
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto get(@PathVariable("itemId") long id) {
+    public ItemDtoWithBookingDate get(@PathVariable("itemId") long id,
+                                      @RequestHeader(X_SHARER_USER_ID) long idOwner) {
         log.info("Getting item id={}", id);
-        return itemService.get(id);
+        return itemService.get(id, idOwner);
     }
 
     @GetMapping
-    public List<ItemDto> getByOwner(@RequestHeader("X-Sharer-User-Id") long idOwner) {
+    public List<ItemDtoWithBookingDate> getByOwner(@RequestHeader(X_SHARER_USER_ID) long idOwner) {
         log.info("Getting items with ownerId={}", idOwner);
         return itemService.getByOwner(idOwner);
     }
@@ -59,5 +65,12 @@ public class ItemController {
     public List<ItemDto> search(@RequestParam String text) {
         log.info("Searching matches by name or description in item with text '{}'", text);
         return itemService.search(text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDtoResponse createComment(@Valid @RequestBody CommentDtoRequest comment,
+                                            @RequestHeader(X_SHARER_USER_ID) long userId,
+                                            @PathVariable long itemId) {
+        return itemService.createComment(comment, userId, itemId);
     }
 }
