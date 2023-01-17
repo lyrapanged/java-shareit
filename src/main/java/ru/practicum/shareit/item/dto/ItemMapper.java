@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.dto.BookingDtoResponseShort;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.model.ItemRequest;
 
 import java.util.List;
 
@@ -11,21 +12,20 @@ import java.util.List;
 public class ItemMapper {
 
     public static ItemDto toItemDto(Item item) {
-        return ItemDto.builder()
+        var builder = ItemDto.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
-                .available(item.getAvailable())
-                .ownerId(item.getOwner().getId())
-                .build();
+                .available(item.getAvailable());
+        return item.getItemRequest() != null ? builder.requestId(item.getItemRequest().getId()).build() : builder.build();
     }
 
-    public static Item fromItemDto(ItemDto itemDto) {
-        return Item.builder()
+    public static Item fromItemDto(ItemDto itemDto, ItemRequest itemRequest) {
+        var builder = Item.builder()
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())
-                .available(itemDto.getAvailable())
-                .build();
+                .available(itemDto.getAvailable());
+        return itemRequest != null ? builder.itemRequest(itemRequest).build() : builder.build();
     }
 
     public static void updateFromItemDto(ItemDto itemDto, Item item) {
@@ -55,5 +55,14 @@ public class ItemMapper {
             build.nextBooking(next);
         }
         return build.build();
+    }
+
+    public static ItemDtoShort toItemDtoShort(Item item) {
+        var builder = ItemDtoShort.builder()
+                .idItem(item.getId())
+                .name(item.getName())
+                .idOwner(item.getOwner().getId());
+        return item.getItemRequest() != null ? builder.idRequest(item.getItemRequest().getId()).build() :
+                builder.build();
     }
 }

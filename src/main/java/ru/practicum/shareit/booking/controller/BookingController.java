@@ -2,6 +2,9 @@ package ru.practicum.shareit.booking.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,26 +20,32 @@ import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.booking.service.BookingState;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
+import static ru.practicum.shareit.util.Constants.SORT_BY_START_DESC;
 import static ru.practicum.shareit.util.Constants.X_SHARER_USER_ID;
 
 @RestController
 @RequestMapping(path = "/bookings")
 @Slf4j
 @RequiredArgsConstructor
+@Validated
 public class BookingController {
 
     private final BookingService bookingService;
 
     @PostMapping
-    public BookingDtoResponse create(@RequestBody @Valid BookingDtoRequest bookingDtoRequest, @RequestHeader(X_SHARER_USER_ID) long bookerId) {
+    public BookingDtoResponse create(@RequestBody @Valid BookingDtoRequest bookingDtoRequest,
+                                     @RequestHeader(X_SHARER_USER_ID) long bookerId) {
         log.info("Creating booking userId={}", bookerId);
         return bookingService.create(bookingDtoRequest, bookerId);
     }
 
     @PatchMapping("{bookingId}")
-    public BookingDtoResponse updateStatus(@PathVariable Long bookingId, @RequestHeader(X_SHARER_USER_ID) long userId, @RequestParam(name = "approved") boolean isApprove) {
+    public BookingDtoResponse updateStatus(@PathVariable Long bookingId, @RequestHeader(X_SHARER_USER_ID) long userId,
+                                           @RequestParam(name = "approved") boolean isApprove) {
         log.info("Updating status bookingId={}", bookingId);
         return bookingService.updateStatus(bookingId, userId, isApprove);
     }
@@ -48,14 +57,28 @@ public class BookingController {
     }
 
     @GetMapping()
-    public List<BookingDtoResponse> getAllByBooker(@RequestHeader(X_SHARER_USER_ID) long ownerId, @RequestParam(defaultValue = "ALL") BookingState state) {
+    public List<BookingDtoResponse> getAllByBooker(@RequestHeader(X_SHARER_USER_ID) long ownerId,
+                                                   @RequestParam(defaultValue = "ALL") BookingState state,
+                                                   @PositiveOrZero @RequestParam(name = "from", defaultValue = "0")
+                                                   Integer from,
+                                                   @Positive @RequestParam(name = "size", defaultValue = "10")
+                                                   Integer size) {
+        int page = from / size;
+        final  Pageable pageable = PageRequest.of(page, size, SORT_BY_START_DESC);
         log.info("Getting all booking with idOwner={}", ownerId);
-        return bookingService.getAllByBooker(ownerId, state);
+        return bookingService.getAllByBooker(ownerId, state, pageable);
     }
 
     @GetMapping("/owner")
-    public List<BookingDtoResponse> getAllByOwner(@RequestHeader(X_SHARER_USER_ID) long ownerId, @RequestParam(defaultValue = "ALL") BookingState state) {
+    public List<BookingDtoResponse> getAllByOwner(@RequestHeader(X_SHARER_USER_ID) long ownerId,
+                                                  @RequestParam(defaultValue = "ALL") BookingState state,
+                                                  @PositiveOrZero @RequestParam(name = "from", defaultValue = "0")
+                                                  Integer from,
+                                                  @Positive @RequestParam(name = "size", defaultValue = "10")
+                                                  Integer size) {
         log.info("Getting all booking with idOwner={}", ownerId);
-        return bookingService.getAllByOwner(ownerId, state);
+        int page = from / size;
+        final  Pageable pageable = PageRequest.of(page, size, SORT_BY_START_DESC);
+        return bookingService.getAllByOwner(ownerId, state, pageable);
     }
 }

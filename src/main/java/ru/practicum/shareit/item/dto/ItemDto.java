@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.dto;
 
 import lombok.Builder;
+import lombok.Getter;
 import lombok.Value;
 import ru.practicum.shareit.util.NullOrNotBlank;
 
@@ -22,7 +23,7 @@ public class ItemDto {
     @NotNull(groups = AdvancedConstraint.class)
     Boolean available;
 
-    Long ownerId;
+    Long requestId;
 
     public interface AdvancedConstraint {
     }

@@ -1,6 +1,8 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dao.BookingRepository;
@@ -75,51 +77,50 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDtoResponse> getAllByBooker(long ownerId, BookingState state) {
+    public List<BookingDtoResponse> getAllByBooker(long ownerId, BookingState state, Pageable pageable) {
         getUserOrThrow(ownerId);
         switch (state) {
             case PAST:
                 return convertToBookingDto(bookingRepository
-                        .findAllByBookerIdAndEndIsBefore(ownerId, now(), SORT_BY_START_DESC));
+                        .findAllByBookerIdAndEndIsBefore(ownerId, now(), pageable));
             case CURRENT:
-                return convertToBookingDto(bookingRepository
-                        .findAllByBookerIdAndStartIsBeforeAndEndIsAfter(ownerId, now(), now(), SORT_BY_START_DESC));
+                return convertToBookingDto(bookingRepository.findAllByBookerIdAndStartIsBeforeAndEndIsAfter(
+                                ownerId, now(), now(), pageable));
             case FUTURE:
                 return convertToBookingDto(bookingRepository
-                        .findAllByBookerIdAndStartIsAfter(ownerId, now(), SORT_BY_START_DESC));
+                        .findAllByBookerIdAndStartIsAfter(ownerId, now(), pageable));
             case WAITING:
                 return convertToBookingDto(bookingRepository
-                        .findAllByBookerIdAndStatus(ownerId, WAITING, SORT_BY_START_DESC));
+                        .findAllByBookerIdAndStatus(ownerId, WAITING, pageable));
             case REJECTED:
                 return convertToBookingDto(bookingRepository
-                        .findAllByBookerIdAndStatus(ownerId, REJECTED, SORT_BY_START_DESC));
+                        .findAllByBookerIdAndStatus(ownerId, REJECTED, pageable));
             default:
-                return convertToBookingDto(bookingRepository.findAllByBookerIdOrderByStartDesc(ownerId));
+                return convertToBookingDto(bookingRepository.findAllByBookerId(ownerId,pageable));
         }
     }
 
     @Override
-    public List<BookingDtoResponse> getAllByOwner(long ownerId, BookingState state) {
+    public List<BookingDtoResponse> getAllByOwner(long ownerId, BookingState state, Pageable pageable) {
         getUserOrThrow(ownerId);
         switch (state) {
             case PAST:
                 return convertToBookingDto(bookingRepository
-                        .findAllItemOwnerPastBookings(ownerId, now(), SORT_BY_START_DESC));
+                        .findAllItemOwnerPastBookings(ownerId, now(),pageable));
             case CURRENT:
                 return convertToBookingDto(bookingRepository
-                        .findAllItemOwnerCurrentBookings(ownerId, now(), SORT_BY_START_DESC));
+                        .findAllItemOwnerCurrentBookings(ownerId, now(),pageable));
             case FUTURE:
                 return convertToBookingDto(bookingRepository
-                        .findAllItemOwnerFutureBookings(ownerId, now(), SORT_BY_START_DESC));
+                        .findAllItemOwnerFutureBookings(ownerId, now(), pageable));
             case WAITING:
                 return convertToBookingDto(bookingRepository
-                        .findAllItemOwnerBookingsByStatus(ownerId, WAITING, SORT_BY_START_DESC));
+                        .findAllItemOwnerBookingsByStatus(ownerId, WAITING,pageable));
             case REJECTED:
                 return convertToBookingDto(bookingRepository
-                        .findAllItemOwnerBookingsByStatus(ownerId, REJECTED, SORT_BY_START_DESC));
-            default:
-                return convertToBookingDto(bookingRepository
-                        .findAllItemOwnerBookings(ownerId, SORT_BY_START_DESC));
+                        .findAllItemOwnerBookingsByStatus(ownerId, REJECTED, pageable));
+            default: return convertToBookingDto(bookingRepository
+                        .findAllItemOwnerBookings(ownerId,pageable));
         }
     }
 
