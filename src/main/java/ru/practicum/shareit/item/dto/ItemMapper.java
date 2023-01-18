@@ -56,13 +56,4 @@ public class ItemMapper {
         }
         return build.build();
     }
-
-    public static ItemDtoShort toItemDtoShort(Item item) {
-        var builder = ItemDtoShort.builder()
-                .idItem(item.getId())
-                .name(item.getName())
-                .idOwner(item.getOwner().getId());
-        return item.getItemRequest() != null ? builder.idRequest(item.getItemRequest().getId()).build() :
-                builder.build();
-    }
 }

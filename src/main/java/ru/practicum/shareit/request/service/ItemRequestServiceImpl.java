@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dao.ItemRepository;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemDtoShort;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dao.ItemRequestRepository;
@@ -52,7 +51,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public List<ItemRequestDtoResponseWithItems> getByOwner(long ownerId) {
         User requester = getUserOrThrow(ownerId);
         List<ItemRequest> requests = itemRequestRepository
-                .findAllByRequestorId(requester.getId(), Sort.by("created"));
+                .findAllByRequesterId(requester.getId(), Sort.by("created"));
         List<Item> items = itemRepository.findAllByItemRequestIn(requests);
         return getItemRequestDtoResponseWithItems(requests, items);
     }
@@ -61,7 +60,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public List<ItemRequestDtoResponseWithItems> getAll(long ownerId, Pageable pageable) {
         User owner = getUserOrThrow(ownerId);
-        List<ItemRequest> allByRequestorIsNot = itemRequestRepository.findAllByRequestorIsNot(owner, pageable);
+        List<ItemRequest> allByRequestorIsNot = itemRequestRepository.findAllByRequesterIsNot(owner, pageable);
         List<Item> allByItemRequestIn = itemRepository.findAllByItemRequestIn(allByRequestorIsNot);
         return getItemRequestDtoResponseWithItems(allByRequestorIsNot, allByItemRequestIn);
     }
@@ -83,7 +82,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     private ItemRequest getItemRequestOrThrow(long requestId) {
-        return itemRequestRepository.findById(requestId).orElseThrow(() -> new NotFoundException("user with id=" + requestId));
+        return itemRequestRepository.findById(requestId)
+                .orElseThrow(() -> new NotFoundException("user with id=" + requestId));
     }
 
     private static List<ItemRequestDtoResponseWithItems> getItemRequestDtoResponseWithItems(List<ItemRequest> requests,
@@ -102,7 +102,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         if (!requests.isEmpty()) {
             return requests.stream()
                     .map(itemRequest -> ItemRequestMapper.toItemRequestDtoResponseWithItems(itemRequest,
-                            itemsWithIdRequest.getOrDefault(itemRequest.getRequestor().getId(), Collections.emptyList())))
+                            itemsWithIdRequest.getOrDefault(itemRequest.getRequester().getId(), Collections.emptyList())))
                     .collect(Collectors.toList());
         }
         return Collections.emptyList();

@@ -23,14 +23,12 @@ import ru.practicum.shareit.item.service.ItemService;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import static ru.practicum.shareit.item.dto.ItemDto.AdvancedConstraint;
 import static ru.practicum.shareit.item.dto.ItemDto.BasicConstraint;
 import static ru.practicum.shareit.util.Constants.SORT_BY_ID_ASC;
-import static ru.practicum.shareit.util.Constants.SORT_BY_START_DESC;
 import static ru.practicum.shareit.util.Constants.X_SHARER_USER_ID;
 
 @RestController
@@ -50,16 +48,14 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto update(@PathVariable("itemId") long itemId,
-                          @Validated(BasicConstraint.class) @RequestBody ItemDto itemDto,
-                          @RequestHeader(X_SHARER_USER_ID) long idOwner) {
+    public ItemDto update(@PathVariable("itemId") long itemId, @Validated(BasicConstraint.class)
+    @RequestBody ItemDto itemDto, @RequestHeader(X_SHARER_USER_ID) long idOwner) {
         log.info("Updating item id={}", itemId);
         return itemService.update(itemId, itemDto, idOwner);
     }
 
     @GetMapping("/{itemId}")
-    public ItemDtoWithBookingDate get(@PathVariable("itemId") long id,
-                                      @RequestHeader(X_SHARER_USER_ID) long idOwner) {
+    public ItemDtoWithBookingDate get(@PathVariable("itemId") long id, @RequestHeader(X_SHARER_USER_ID) long idOwner) {
         log.info("Getting item id={}", id);
         return itemService.get(id, idOwner);
     }
@@ -69,28 +65,26 @@ public class ItemController {
                                                    @PositiveOrZero @RequestParam(name = "from", defaultValue = "0")
                                                    Integer from,
                                                    @Positive @RequestParam(name = "size", defaultValue = "10")
-                                                   Integer size) {//todo add pageable
+                                                   Integer size) {
         log.info("Getting items with ownerId={}", idOwner);
         int page = from / size;
         final Pageable pageable = PageRequest.of(page, size, SORT_BY_ID_ASC);
-        return itemService.getByOwner(idOwner,pageable);
+        return itemService.getByOwner(idOwner, pageable);
     }
 
     @GetMapping("/search")
     public List<ItemDto> search(@RequestParam String text,
                                 @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
-                                @Positive @RequestParam(name = "size", defaultValue = "10")
-                                Integer size) {
-        log.info("Searching matches by name or description in item with text '{}'", text);//todo add pageable
+                                @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
+        log.info("Searching matches by name or description in item with text '{}'", text);
         int page = from / size;
         final Pageable pageable = PageRequest.of(page, size, SORT_BY_ID_ASC);
-        return text.isBlank() ? Collections.emptyList() : itemService.search(text,pageable);
+        return text.isBlank() ? Collections.emptyList() : itemService.search(text, pageable);
     }
 
     @PostMapping("/{itemId}/comment")
     public CommentDtoResponse createComment(@Valid @RequestBody CommentDtoRequest comment,
-                                            @RequestHeader(X_SHARER_USER_ID) long userId,
-                                            @PathVariable long itemId) {
+                                            @RequestHeader(X_SHARER_USER_ID) long userId, @PathVariable long itemId) {
         return itemService.createComment(comment, userId, itemId);
     }
 }

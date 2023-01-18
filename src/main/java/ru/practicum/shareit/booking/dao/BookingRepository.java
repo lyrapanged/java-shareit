@@ -14,16 +14,16 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
-    List<Booking> findAllByBookerId(Long userId,Pageable pageable);
+    List<Booking> findAllByBookerId(Long userId, Pageable pageable);
 
     List<Booking> findAllByBookerIdAndStartIsBeforeAndEndIsAfter(Long userId, LocalDateTime startTime,
                                                                  LocalDateTime endTime, Pageable pageable);
 
     List<Booking> findAllByBookerIdAndEndIsBefore(Long userId, LocalDateTime endTime, Pageable pageable);
 
-    List<Booking> findAllByBookerIdAndStartIsAfter(Long userId, LocalDateTime startTime,Pageable pageable);
+    List<Booking> findAllByBookerIdAndStartIsAfter(Long userId, LocalDateTime startTime, Pageable pageable);
 
-    List<Booking> findAllByBookerIdAndStatus(Long userId, BookingStatus status,Pageable pageable);
+    List<Booking> findAllByBookerIdAndStatus(Long userId, BookingStatus status, Pageable pageable);
 
     @Query("SELECT b FROM Booking b " +
             "WHERE b.item.owner.id = ?1")
@@ -31,7 +31,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("SELECT b FROM Booking b " +
             "WHERE  ?2 BETWEEN b.start AND  b.end AND b.item.owner.id = ?1")
-    List<Booking> findAllItemOwnerCurrentBookings(Long userId, LocalDateTime time,Pageable pageable);
+    List<Booking> findAllItemOwnerCurrentBookings(Long userId, LocalDateTime time, Pageable pageable);
 
     @Query("SELECT b FROM Booking b " +
             "WHERE b.item.owner.id = ?1 AND b.end< ?2")

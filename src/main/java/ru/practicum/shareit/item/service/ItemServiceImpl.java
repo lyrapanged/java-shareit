@@ -56,7 +56,7 @@ public class ItemServiceImpl implements ItemService {
         User user = getUserOrThrow(idOwner);
         Long requestId = itemDto.getRequestId();
         ItemRequest itemRequest = null;
-        if(requestId != null){
+        if (requestId != null) {
             itemRequest = getItemRequestOrThrow(requestId);
         }
         Item item = ItemMapper.fromItemDto(itemDto, itemRequest);
@@ -83,7 +83,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDtoWithBookingDate> getByOwner(long idOwner,Pageable pageable) {
+    public List<ItemDtoWithBookingDate> getByOwner(long idOwner, Pageable pageable) {
         List<Item> items = itemRepository.findByOwnerId(idOwner, SORT_BY_ID_ASC);
         List<Comment> comments = commentRepository.findAllByItemIn(items);
         LocalDateTime now = now();
@@ -112,7 +112,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> search(String text, Pageable pageable) {
-        return itemRepository.search(text.toLowerCase(),pageable).stream().map(ItemMapper::toItemDto).collect(toList());
+        return itemRepository.search(text.toLowerCase(), pageable).stream().map(ItemMapper::toItemDto).collect(toList());
     }
 
     @Override
@@ -155,6 +155,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private ItemRequest getItemRequestOrThrow(long id) {
-        return itemRequestRepository.findById(id).orElseThrow(() -> new NotFoundException("user with id = " + id));
+        return itemRequestRepository.findById(id).orElseThrow(() -> new NotFoundException("requestId = " + id));
     }
 }

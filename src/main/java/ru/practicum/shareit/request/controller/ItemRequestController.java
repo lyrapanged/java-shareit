@@ -3,7 +3,6 @@ package ru.practicum.shareit.request.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,14 +55,14 @@ public class ItemRequestController {
                                                         @Positive @RequestParam(name = "size", defaultValue = "10")
                                                         Integer size) {
         log.info("Getting ALL request by  userId={}", ownerId);
-        int page = from/size;
-        Sort sort = Sort.by(Sort.Direction.DESC,"created");
-        return itemRequestService.getAll(ownerId, PageRequest.of(page,size,sort));
+        int page = from / size;
+        Sort sort = Sort.by(Sort.Direction.DESC, "created");
+        return itemRequestService.getAll(ownerId, PageRequest.of(page, size, sort));
     }
 
     @GetMapping("{requestId}")
-    public ItemRequestDtoResponseWithItems get( @RequestHeader(X_SHARER_USER_ID) long ownerId,
-                                                @PathVariable long requestId) {
-        return itemRequestService.get(ownerId,requestId);
+    public ItemRequestDtoResponseWithItems get(@RequestHeader(X_SHARER_USER_ID) long ownerId,
+                                               @PathVariable long requestId) {
+        return itemRequestService.get(ownerId, requestId);
     }
 }

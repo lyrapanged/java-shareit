@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +23,6 @@ import static java.util.stream.Collectors.toList;
 import static ru.practicum.shareit.booking.model.BookingStatus.APPROVED;
 import static ru.practicum.shareit.booking.model.BookingStatus.REJECTED;
 import static ru.practicum.shareit.booking.model.BookingStatus.WAITING;
-import static ru.practicum.shareit.util.Constants.SORT_BY_START_DESC;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +39,7 @@ public class BookingServiceImpl implements BookingService {
         User booker = getUserOrThrow(bookerId);
         Item item = getItemOrTrow(bookingDtoRequest.getItemId());
         if (item.getOwner().getId() == bookerId) {
-            throw new NotFoundException("Not today mate");
+            throw new NotFoundException("id should be equal booker id. Entity");
         }
         if (!item.getAvailable()) {
             throw new ValidationException("Item must  be available for booking");
@@ -56,7 +54,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingDtoResponse updateStatus(long bookingId, long userId, boolean isApprove) {
         Booking booking = getBookingOrThrow(bookingId);
         if (booking.getItem().getOwner().getId() != userId) {
-            throw new NotFoundException("Owner only");
+            throw new NotFoundException("Access");
         }
         if (booking.getStatus().equals(WAITING)) {
             booking.setStatus(isApprove ? APPROVED : REJECTED);
@@ -71,7 +69,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingDtoResponse get(long bookingId, long userId) {
         Booking booking = getBookingOrThrow(bookingId);
         if (booking.getItem().getOwner().getId() != userId && userId != booking.getBooker().getId()) {
-            throw new NotFoundException("No access");
+            throw new NotFoundException("access");
         }
         return BookingMapper.toBookingDto(booking);
     }
@@ -81,22 +79,17 @@ public class BookingServiceImpl implements BookingService {
         getUserOrThrow(ownerId);
         switch (state) {
             case PAST:
-                return convertToBookingDto(bookingRepository
-                        .findAllByBookerIdAndEndIsBefore(ownerId, now(), pageable));
+                return convertToBookingDto(bookingRepository.findAllByBookerIdAndEndIsBefore(ownerId, now(), pageable));
             case CURRENT:
-                return convertToBookingDto(bookingRepository.findAllByBookerIdAndStartIsBeforeAndEndIsAfter(
-                                ownerId, now(), now(), pageable));
+                return convertToBookingDto(bookingRepository.findAllByBookerIdAndStartIsBeforeAndEndIsAfter(ownerId, now(), now(), pageable));
             case FUTURE:
-                return convertToBookingDto(bookingRepository
-                        .findAllByBookerIdAndStartIsAfter(ownerId, now(), pageable));
+                return convertToBookingDto(bookingRepository.findAllByBookerIdAndStartIsAfter(ownerId, now(), pageable));
             case WAITING:
-                return convertToBookingDto(bookingRepository
-                        .findAllByBookerIdAndStatus(ownerId, WAITING, pageable));
+                return convertToBookingDto(bookingRepository.findAllByBookerIdAndStatus(ownerId, WAITING, pageable));
             case REJECTED:
-                return convertToBookingDto(bookingRepository
-                        .findAllByBookerIdAndStatus(ownerId, REJECTED, pageable));
+                return convertToBookingDto(bookingRepository.findAllByBookerIdAndStatus(ownerId, REJECTED, pageable));
             default:
-                return convertToBookingDto(bookingRepository.findAllByBookerId(ownerId,pageable));
+                return convertToBookingDto(bookingRepository.findAllByBookerId(ownerId, pageable));
         }
     }
 
@@ -105,38 +98,30 @@ public class BookingServiceImpl implements BookingService {
         getUserOrThrow(ownerId);
         switch (state) {
             case PAST:
-                return convertToBookingDto(bookingRepository
-                        .findAllItemOwnerPastBookings(ownerId, now(),pageable));
+                return convertToBookingDto(bookingRepository.findAllItemOwnerPastBookings(ownerId, now(), pageable));
             case CURRENT:
-                return convertToBookingDto(bookingRepository
-                        .findAllItemOwnerCurrentBookings(ownerId, now(),pageable));
+                return convertToBookingDto(bookingRepository.findAllItemOwnerCurrentBookings(ownerId, now(), pageable));
             case FUTURE:
-                return convertToBookingDto(bookingRepository
-                        .findAllItemOwnerFutureBookings(ownerId, now(), pageable));
+                return convertToBookingDto(bookingRepository.findAllItemOwnerFutureBookings(ownerId, now(), pageable));
             case WAITING:
-                return convertToBookingDto(bookingRepository
-                        .findAllItemOwnerBookingsByStatus(ownerId, WAITING,pageable));
+                return convertToBookingDto(bookingRepository.findAllItemOwnerBookingsByStatus(ownerId, WAITING, pageable));
             case REJECTED:
-                return convertToBookingDto(bookingRepository
-                        .findAllItemOwnerBookingsByStatus(ownerId, REJECTED, pageable));
-            default: return convertToBookingDto(bookingRepository
-                        .findAllItemOwnerBookings(ownerId,pageable));
+                return convertToBookingDto(bookingRepository.findAllItemOwnerBookingsByStatus(ownerId, REJECTED, pageable));
+            default:
+                return convertToBookingDto(bookingRepository.findAllItemOwnerBookings(ownerId, pageable));
         }
     }
 
     private Booking getBookingOrThrow(long bookingId) {
-        return bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new NotFoundException("booking with id=" + bookingId));
+        return bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("booking with id=" + bookingId));
     }
 
     private User getUserOrThrow(long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("booking with id=" + userId));
+        return userRepository.findById(userId).orElseThrow(() -> new NotFoundException("user with id=" + userId));
     }
 
     private Item getItemOrTrow(long itemId) {
-        return itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException("booking with id=" + itemId));
+        return itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("item with id=" + itemId));
     }
 
     private List<BookingDtoResponse> convertToBookingDto(List<Booking> bookings) {

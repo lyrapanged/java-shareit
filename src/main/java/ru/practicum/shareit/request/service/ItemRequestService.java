@@ -5,7 +5,6 @@ import ru.practicum.shareit.request.dto.ItemRequestDtoRequest;
 import ru.practicum.shareit.request.dto.ItemRequestDtoResponse;
 import ru.practicum.shareit.request.dto.ItemRequestDtoResponseWithItems;
 
-
 import java.util.List;
 
 public interface ItemRequestService {
@@ -16,5 +15,5 @@ public interface ItemRequestService {
 
     List<ItemRequestDtoResponseWithItems> getAll(long ownerId, Pageable pageRequest);
 
-    ItemRequestDtoResponseWithItems get(long ownerId,long requestId);
+    ItemRequestDtoResponseWithItems get(long ownerId, long requestId);
 }

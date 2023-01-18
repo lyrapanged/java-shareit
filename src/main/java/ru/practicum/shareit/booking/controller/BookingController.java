@@ -64,7 +64,7 @@ public class BookingController {
                                                    @Positive @RequestParam(name = "size", defaultValue = "10")
                                                    Integer size) {
         int page = from / size;
-        final  Pageable pageable = PageRequest.of(page, size, SORT_BY_START_DESC);
+        final Pageable pageable = PageRequest.of(page, size, SORT_BY_START_DESC);
         log.info("Getting all booking with idOwner={}", ownerId);
         return bookingService.getAllByBooker(ownerId, state, pageable);
     }
@@ -78,7 +78,7 @@ public class BookingController {
                                                   Integer size) {
         log.info("Getting all booking with idOwner={}", ownerId);
         int page = from / size;
-        final  Pageable pageable = PageRequest.of(page, size, SORT_BY_START_DESC);
+        final Pageable pageable = PageRequest.of(page, size, SORT_BY_START_DESC);
         return bookingService.getAllByOwner(ownerId, state, pageable);
     }
 }

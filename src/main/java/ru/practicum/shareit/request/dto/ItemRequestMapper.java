@@ -1,7 +1,6 @@
 package ru.practicum.shareit.request.dto;
 
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemDtoShort;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
@@ -10,7 +9,7 @@ import java.util.List;
 public class ItemRequestMapper {
 
     public static ItemRequestDtoResponse toItemRequestDtoResponse(ItemRequest itemRequest) {
-        return  ItemRequestDtoResponse.builder()
+        return ItemRequestDtoResponse.builder()
                 .id(itemRequest.getId())
                 .description(itemRequest.getDescription())
                 .created(itemRequest.getCreated())
@@ -27,11 +26,11 @@ public class ItemRequestMapper {
                 .build();
     }
 
-    public static ItemRequest toItemRequest(ItemRequestDtoRequest itemRequestDtoRequest, User requestor){
+    public static ItemRequest toItemRequest(ItemRequestDtoRequest itemRequestDtoRequest, User requestor) {
         return ItemRequest.builder()
                 .id(itemRequestDtoRequest.getId())
                 .description(itemRequestDtoRequest.getDescription())
-                .requestor(requestor)
+                .requester(requestor)
                 .created(itemRequestDtoRequest.getCreated())
                 .build();
     }
