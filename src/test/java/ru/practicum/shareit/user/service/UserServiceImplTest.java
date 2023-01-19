@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.dao.EmptyResultDataAccessException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dao.UserRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
@@ -14,11 +15,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -102,7 +103,11 @@ class UserServiceImplTest {
 
     @Test
     void delete_isThrow() {
+        User user = new User(1L, "mane", "imail@.gmail.com");
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         doThrow(EmptyResultDataAccessException.class).when(userRepository).deleteById(1L);
-        verify(userRepository, never()).deleteById(1L);
+        NotFoundException e = assertThrows(NotFoundException.class, () -> userService.delete(1));
+        assertEquals("This user with id=1 does not exist", e.getMessage());
+        verify(userRepository, times(1)).deleteById(1L);
     }
 }

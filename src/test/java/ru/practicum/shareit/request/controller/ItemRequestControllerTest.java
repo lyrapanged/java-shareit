@@ -54,7 +54,7 @@ class ItemRequestControllerTest {
 
     @SneakyThrows
     @Test
-    void create() {
+    void create_Status_isOk() {
         when(itemRequestService.create(any(), anyLong())).thenReturn(requestDto);
 
         mockMvc.perform(post("/requests")
@@ -70,7 +70,22 @@ class ItemRequestControllerTest {
 
     @SneakyThrows
     @Test
-    void getByOwner() {
+    void create_BadBodyDescriptionEmpty_ThenThrow_BadRequest() {
+        ItemRequest request1 = new ItemRequest(1L, "", owner, LocalDateTime.now());
+        ItemRequestDtoResponse requestDto1 = ItemRequestMapper.toItemRequestDtoResponse(request1);
+        when(itemRequestService.create(any(), anyLong())).thenReturn(requestDto1);
+        mockMvc.perform(post("/requests")
+                        .header("X-Sharer-User-Id", 1L)
+                        .content(mapper.writeValueAsString(requestDto1))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @SneakyThrows
+    @Test
+    void getByOwner_Status_isOk() {
         when(itemRequestService.getByOwner(anyLong())).thenReturn(List.of(itemRequestDtoResponseWithItems));
         mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/requests")
                         .header("X-Sharer-User-Id", 1L)
@@ -86,12 +101,26 @@ class ItemRequestControllerTest {
 
     @SneakyThrows
     @Test
-    void getAll() {
+    void getByOwner_BadHeader_ThenTrow_BadRequest() {
+        when(itemRequestService.getByOwner(anyLong())).thenReturn(List.of(itemRequestDtoResponseWithItems));
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/requests")
+                        .header("X-Sharer-User-Id", "1L")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @SneakyThrows
+    @Test
+    void getAll_Status_isOk() {
         when(itemRequestService.getAll(anyLong(), any())).thenReturn(List.of(itemRequestDtoResponseWithItems));
         mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/requests/all")
                         .header("X-Sharer-User-Id", 1L)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .param("size", "12")
+                        .param("from", "0")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].description", is(itemRequestDtoResponseWithItems.getDescription()), String.class))
@@ -100,7 +129,35 @@ class ItemRequestControllerTest {
 
     @SneakyThrows
     @Test
-    void get() {
+    void getAll_BadParamSize_ThenTrow_BadRequest() {
+        when(itemRequestService.getAll(anyLong(), any())).thenReturn(List.of(itemRequestDtoResponseWithItems));
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/requests/all")
+                        .header("X-Sharer-User-Id", 1L)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("size", "0")
+                        .param("from", "0")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @SneakyThrows
+    @Test
+    void getAll_BadParamFrom_ThenTrow_BadRequest() {
+        when(itemRequestService.getAll(anyLong(), any())).thenReturn(List.of(itemRequestDtoResponseWithItems));
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/requests/all")
+                        .header("X-Sharer-User-Id", 1L)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("size", "10")
+                        .param("from", "-1")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @SneakyThrows
+    @Test
+    void get_Status_isOk() {
         when(itemRequestService.get(anyLong(), anyLong())).thenReturn(itemRequestDtoResponseWithItems);
         mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/requests/1")
                         .header("X-Sharer-User-Id", 1L)
@@ -110,5 +167,17 @@ class ItemRequestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.description", is(itemRequestDtoResponseWithItems.getDescription()), String.class))
                 .andExpect(jsonPath("$.id", is(itemRequestDtoResponseWithItems.getId()), Long.class));
+    }
+
+    @SneakyThrows
+    @Test
+    void get_BadHeaderUserId_ThenTrow_BadRequest() {
+        when(itemRequestService.get(anyLong(), anyLong())).thenReturn(itemRequestDtoResponseWithItems);
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/requests/1")
+                        .header("X-Sharer-User-Id", "1L")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 }

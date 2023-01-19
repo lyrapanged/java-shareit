@@ -22,7 +22,6 @@ import ru.practicum.shareit.user.model.User;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -60,9 +59,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public List<ItemRequestDtoResponseWithItems> getAll(long ownerId, Pageable pageable) {
         User owner = getUserOrThrow(ownerId);
-        List<ItemRequest> allByRequestorIsNot = itemRequestRepository.findAllByRequesterIsNot(owner, pageable);
-        List<Item> allByItemRequestIn = itemRepository.findAllByItemRequestIn(allByRequestorIsNot);
-        return getItemRequestDtoResponseWithItems(allByRequestorIsNot, allByItemRequestIn);
+        List<ItemRequest> allByRequesterIsNot = itemRequestRepository.findAllByRequesterIsNot(owner, pageable);
+        List<Item> allByItemRequestIn = itemRepository.findAllByItemRequestIn(allByRequesterIsNot);
+        return getItemRequestDtoResponseWithItems(allByRequesterIsNot, allByItemRequestIn);
     }
 
     @Override
@@ -88,7 +87,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     private static List<ItemRequestDtoResponseWithItems> getItemRequestDtoResponseWithItems(List<ItemRequest> requests,
                                                                                             List<Item> items) {
-        List<ItemDto> itemDto = new ArrayList<>();
+        List<ItemDto> itemDto = List.of();
         if (!items.isEmpty()) {
             itemDto = items.stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
         }
@@ -97,7 +96,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
             itemsWithIdRequest = itemDto.stream()
                     .collect(Collectors.groupingBy(ItemDto::getRequestId));
         } else {
-            itemsWithIdRequest = new HashMap<>();
+            itemsWithIdRequest = Map.of();
         }
         if (!requests.isEmpty()) {
             return requests.stream()

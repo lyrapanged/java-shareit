@@ -62,6 +62,43 @@ class UserControllerTest {
 
     @SneakyThrows
     @Test
+    void create_BadBodyEmptyName_ThenTrow_BadRequest() {
+        UserDto userDto1 = UserDto.builder()
+                .id(1L)
+                .name("")
+                .email("email@gmail.com")
+                .build();
+        when(userService.create(any())).thenReturn(userDto1);
+        mockMvc.perform(post("/users")
+                        .header("X-Sharer-User-Id", 1L)
+                        .content(mapper.writeValueAsString(userDto1))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @SneakyThrows
+    @Test
+    void create_BadBodyWrongEmail_ThenTrow_BadRequest() {
+        UserDto userDto1 = UserDto.builder()
+                .id(1L)
+                .name("ad")
+                .email("emailgmail.com")
+                .build();
+        when(userService.create(any())).thenReturn(userDto1);
+        mockMvc.perform(post("/users")
+                        .header("X-Sharer-User-Id", 1L)
+                        .content(mapper.writeValueAsString(userDto1))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @SneakyThrows
+    @Test
     void getAll_isOk() {
         UserDto userDto1 = UserDto.builder()
                 .id(2L)
@@ -117,6 +154,58 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.name", is(userDto.getName()), String.class))
                 .andExpect(jsonPath("$.email", is(userDto.getEmail()), String.class))
                 .andExpect(jsonPath("$.id", is(userDto.getId()), Long.class));
+    }
+
+    @SneakyThrows
+    @Test
+    void update_BadBody_EmptyName_ThenTrow_BadRequest() {
+        UserDto userDto = UserDto.builder()
+                .name("")
+                .email("email@gmail.com")
+                .build();
+        when(userService.update(anyLong(), any())).thenReturn(userDto);
+        mockMvc.perform(patch("/users/1")
+                        .header("X-Sharer-User-Id", 1L)
+                        .content(mapper.writeValueAsString(userDto))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @SneakyThrows
+    @Test
+    void update_BadBody_EmptyEmail_ThenTrow_BadRequest() {
+        UserDto userDto = UserDto.builder()
+                .name("name")
+                .email("")
+                .build();
+        when(userService.update(anyLong(), any())).thenReturn(userDto);
+        mockMvc.perform(patch("/users/1")
+                        .header("X-Sharer-User-Id", 1L)
+                        .content(mapper.writeValueAsString(userDto))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @SneakyThrows
+    @Test
+    void update_BadBody_IdNotNull_ThenTrow_BadRequest() {
+        UserDto userDto = UserDto.builder()
+                .id(1L)
+                .name("name")
+                .email("aaaa@gmail.com")
+                .build();
+        when(userService.update(anyLong(), any())).thenReturn(userDto);
+        mockMvc.perform(patch("/users/1")
+                        .header("X-Sharer-User-Id", 1L)
+                        .content(mapper.writeValueAsString(userDto))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @SneakyThrows
