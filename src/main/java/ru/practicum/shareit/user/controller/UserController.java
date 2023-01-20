@@ -45,7 +45,8 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    public UserDto update(@PathVariable("userId") long id, @Validated(BasicConstraint.class) @RequestBody UserDto userDto) {
+    public UserDto update(@PathVariable("userId") long id,
+                          @Validated(BasicConstraint.class) @RequestBody UserDto userDto) {
         log.info("Updating user id={}", id);
         return userService.update(id, userDto);
     }

@@ -1,8 +1,4 @@
--- TRUNCATE TABLE users,items,comments,bookings CASCADE ;
--- ALTER SEQUENCE users_id_seq RESTART WITH 1;
--- ALTER SEQUENCE items_id_seq RESTART WITH 1;
--- ALTER SEQUENCE comments_id_seq RESTART WITH 1;
--- ALTER SEQUENCE bookings_id_seq RESTART WITH 1;
+DROP  TABLE IF EXISTS users,items,comments,bookings,requests CASCADE ;
 
 CREATE TABLE IF NOT EXISTS users
 (
@@ -11,13 +7,22 @@ CREATE TABLE IF NOT EXISTS users
     email VARCHAR(50) UNIQUE NOT NULL
     );
 
+CREATE TABLE IF NOT EXISTS requests
+(
+    id BIGSERIAL PRIMARY KEY ,
+    description VARCHAR(200) NOT NULL ,
+    requester_id BIGINT REFERENCES users(id) ON DELETE CASCADE ,
+    created TIMESTAMP WITHOUT TIME ZONE NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS items
 (
     id BIGSERIAL PRIMARY KEY,
     item_name VARCHAR(30) NOT NULL ,
     description VARCHAR(200) NOT NULL ,
     is_available BOOLEAN NOT NULL ,
-    owner_id BIGINT REFERENCES users(id) ON DELETE CASCADE
+    owner_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
+    request_id BIGINT REFERENCES requests(id)
     );
 
 CREATE TABLE IF NOT EXISTS comments
