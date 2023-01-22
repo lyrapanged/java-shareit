@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import javax.validation.ConstraintViolationException;
 import java.util.Map;
 
 @RestControllerAdvice
@@ -30,12 +29,6 @@ public class ErrorHandler {
 
     @ExceptionHandler
     public ResponseEntity<String> nonValidException(final ValidationException e) {
-        log.info("Validation exception: {}", e.getMessage());
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<String> validationException(final ConstraintViolationException e) {
         log.info("Validation exception: {}", e.getMessage());
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
