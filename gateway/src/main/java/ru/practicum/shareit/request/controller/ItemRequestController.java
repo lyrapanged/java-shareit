@@ -19,8 +19,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 
-import static ru.practicum.shareit.util.Constants.X_SHARER_USER_ID;
-
 @RestController
 @RequestMapping(path = "/requests")
 @Slf4j
@@ -32,20 +30,20 @@ public class ItemRequestController {
 
     @PostMapping
     public ResponseEntity<Object> create(@Valid @RequestBody ItemRequestDtoRequest itemRequestDtoRequest,
-                                         @RequestHeader(X_SHARER_USER_ID) long ownerId) {
+                                         @RequestHeader("X-Sharer-User-Id") long ownerId) {
         log.info("Creating request by  userId={}", ownerId);
         return itemRequestClient.create(itemRequestDtoRequest, ownerId);
     }
 
     @GetMapping
-    public ResponseEntity<Object> getByOwner(@RequestHeader(X_SHARER_USER_ID) long ownerId) {
+    public ResponseEntity<Object> getByOwner(@RequestHeader("X-Sharer-User-Id") long ownerId) {
         log.info("Getting request by  userId={}", ownerId);
         return itemRequestClient.getByOwner(ownerId);
 
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Object> getAll(@RequestHeader(X_SHARER_USER_ID) long ownerId,
+    public ResponseEntity<Object> getAll(@RequestHeader("X-Sharer-User-Id") long ownerId,
                                          @PositiveOrZero @RequestParam(name = "from", defaultValue = "0")
                                          Integer from,
                                          @Positive @RequestParam(name = "size", defaultValue = "10")
@@ -55,7 +53,7 @@ public class ItemRequestController {
     }
 
     @GetMapping("{requestId}")
-    public ResponseEntity<Object> get(@RequestHeader(X_SHARER_USER_ID) long ownerId,
+    public ResponseEntity<Object> get(@RequestHeader("X-Sharer-User-Id") long ownerId,
                                       @PathVariable long requestId) {
         return itemRequestClient.get(ownerId, requestId);
     }

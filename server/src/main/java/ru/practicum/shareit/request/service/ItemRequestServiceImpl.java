@@ -82,7 +82,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     private ItemRequest getItemRequestOrThrow(long requestId) {
         return itemRequestRepository.findById(requestId)
-                .orElseThrow(() -> new NotFoundException("user with id=" + requestId));
+                .orElseThrow(() -> new NotFoundException("request with id=" + requestId));
     }
 
     private static List<ItemRequestDtoResponseWithItems> getItemRequestDtoResponseWithItems(List<ItemRequest> requests,
