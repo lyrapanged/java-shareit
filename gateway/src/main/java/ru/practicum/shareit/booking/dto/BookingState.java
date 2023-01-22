@@ -8,5 +8,4 @@ public enum BookingState {
     PAST,
     REJECTED,
     WAITING
-
 }

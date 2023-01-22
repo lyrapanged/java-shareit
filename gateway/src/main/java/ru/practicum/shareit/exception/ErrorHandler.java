@@ -42,20 +42,6 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> unsupportedEx(final UnsupportedStateException e) {
-        log.info("Validation exception: {}", e.getMessage());
-        return Map.of("error", "Unknown state: UNSUPPORTED_STATUS");
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> unsupportedExc(IllegalArgumentException e) {
-        log.info("Validation exception: {}", e.getMessage());
-        return Map.of("error", "Unknown state: UNSUPPORTED_STATUS");
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> unsupportedEx(final MethodArgumentTypeMismatchException e) {
         log.info("Validation exception: {}", e.getMessage());
         return Map.of("error", "Unknown state: UNSUPPORTED_STATUS");
