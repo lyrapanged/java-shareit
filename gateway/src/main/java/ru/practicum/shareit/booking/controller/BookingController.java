@@ -23,6 +23,7 @@ import javax.validation.constraints.PositiveOrZero;
 
 import static ru.practicum.shareit.util.Constants.X_SHARER_USER_ID;
 
+
 @RestController
 @RequestMapping(path = "/bookings")
 @Slf4j
